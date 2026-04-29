@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowUpRight, TrendingUp, Users, AlertCircle, BrainCircuit } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const Dashboard = () => {
   const stats = [
@@ -9,17 +10,37 @@ const Dashboard = () => {
     { label: 'AI Sessions', value: '8,432', change: '+24%', icon: BrainCircuit, color: 'text-indigo-400' },
   ];
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const item = {
+    hidden: { y: 20, opacity: 0 },
+    show: { y: 0, opacity: 1 }
+  };
+
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
+    <motion.div 
+      variants={container}
+      initial="hidden"
+      animate="show"
+      className="space-y-8"
+    >
       <div className="flex items-end justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Institutional Overview</h1>
+        <motion.div variants={item}>
+          <h1 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-500">Institutional Overview</h1>
           <p className="text-slate-500 mt-1">Real-time learning insights across all active cohorts.</p>
-        </div>
-        <div className="flex gap-3">
-          <button className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-sm font-medium transition-all">Download Report</button>
-          <button className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-sm font-medium transition-all">Add Student</button>
-        </div>
+        </motion.div>
+        <motion.div variants={item} className="flex gap-3">
+          <button className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-sm font-medium transition-all border border-slate-700">Download Report</button>
+          <button className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 rounded-xl text-sm font-medium transition-all shadow-lg shadow-indigo-500/20">Add Student</button>
+        </motion.div>
       </div>
 
       {/* Stats Grid */}
@@ -27,9 +48,14 @@ const Dashboard = () => {
         {stats.map((stat, i) => {
           const Icon = stat.icon;
           return (
-            <div key={i} className="bg-slate-900/50 border border-slate-800 p-6 rounded-2xl hover:border-indigo-500/50 transition-all group">
+            <motion.div 
+              key={i} 
+              variants={item}
+              className="bg-slate-900/50 border border-slate-800 p-6 rounded-2xl hover:border-indigo-500/50 transition-all group relative overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 blur-[80px] -mr-16 -mt-16 group-hover:bg-indigo-500/10 transition-all"></div>
               <div className="flex items-center justify-between mb-4">
-                <div className={`p-3 rounded-xl bg-slate-800 group-hover:scale-110 transition-transform ${stat.color}`}>
+                <div className={`p-3 rounded-xl bg-slate-800 group-hover:scale-110 transition-transform ${stat.color} border border-slate-700`}>
                   <Icon size={24} />
                 </div>
                 <div className="flex items-center gap-1 text-emerald-400 text-xs font-bold bg-emerald-400/10 px-2 py-1 rounded-full">
@@ -39,7 +65,7 @@ const Dashboard = () => {
               </div>
               <p className="text-slate-500 text-sm font-medium">{stat.label}</p>
               <h3 className="text-2xl font-bold mt-1 tracking-tight">{stat.value}</h3>
-            </div>
+            </motion.div>
           );
         })}
       </div>

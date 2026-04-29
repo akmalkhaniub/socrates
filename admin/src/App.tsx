@@ -16,13 +16,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="flex h-screen bg-[#020617] text-slate-200 font-sans">
-      {/* Sidebar */}
-      <aside className="w-64 border-r border-slate-800 bg-[#020617] p-6 flex flex-col">
+      {/* Sidebar - Glassmorphism */}
+      <aside className="w-64 border-r border-slate-800/50 bg-[#020617]/80 backdrop-blur-2xl p-6 flex flex-col z-20">
         <div className="flex items-center gap-3 mb-10 px-2">
-          <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center">
+          <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
             <span className="text-white font-bold text-xl">S</span>
           </div>
-          <span className="font-bold text-xl tracking-tight">Socrates AI</span>
+          <span className="font-bold text-xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">Socrates AI</span>
         </div>
 
         <nav className="flex-1 space-y-1">

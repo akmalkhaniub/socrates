@@ -1,10 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
 import { Camera, BookOpen, BarChart2, Settings, MessageSquare } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const Dashboard = ({ navigation }: any) => {
   return (
     <SafeAreaView style={styles.container}>
+      {/* Background Glow */}
+      <View style={styles.glowTop} />
+      
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Header */}
         <View style={styles.header}>
@@ -18,10 +22,12 @@ const Dashboard = ({ navigation }: any) => {
         </View>
 
         {/* Knowledge Map Card */}
-        <View style={styles.statsCard}>
+        <LinearGradient
+          colors={['#1E293B', '#0F172A']}
+          style={styles.statsCard}
+        >
           <Text style={styles.cardTitle}>Knowledge Map</Text>
           <View style={styles.chartPlaceholder}>
-            {/* Simple visual representation of mastery */}
             <View style={[styles.bar, { height: 100, backgroundColor: '#38BDF8' }]} />
             <View style={[styles.bar, { height: 60, backgroundColor: '#818CF8' }]} />
             <View style={[styles.bar, { height: 120, backgroundColor: '#F472B6' }]} />
@@ -33,30 +39,40 @@ const Dashboard = ({ navigation }: any) => {
             <Text style={styles.statsText}>English</Text>
             <Text style={styles.statsText}>History</Text>
           </View>
-        </View>
+        </LinearGradient>
 
         {/* Action Buttons */}
         <View style={styles.actionGrid}>
           <TouchableOpacity 
-            style={styles.actionCard}
+            style={styles.actionCardWrapper}
             onPress={() => navigation.navigate('SocratesLens')}
           >
-            <View style={[styles.iconCircle, { backgroundColor: '#0284C7' }]}>
-              <Camera size={28} color="#FFF" />
-            </View>
-            <Text style={styles.actionLabel}>Mistake Lens</Text>
-            <Text style={styles.actionDesc}>Scan paper & get hints</Text>
+            <LinearGradient
+              colors={['#0284C7', '#0369A1']}
+              style={styles.actionCard}
+            >
+              <View style={styles.iconCircle}>
+                <Camera size={28} color="#FFF" />
+              </View>
+              <Text style={styles.actionLabel}>Mistake Lens</Text>
+              <Text style={styles.actionDesc}>Scan paper & get hints</Text>
+            </LinearGradient>
           </TouchableOpacity>
 
           <TouchableOpacity 
-            style={styles.actionCard}
+            style={styles.actionCardWrapper}
             onPress={() => navigation.navigate('TutorChat')}
           >
-            <View style={[styles.iconCircle, { backgroundColor: '#7C3AED' }]}>
-              <MessageSquare size={28} color="#FFF" />
-            </View>
-            <Text style={styles.actionLabel}>Socratic Chat</Text>
-            <Text style={styles.actionDesc}>Talk to your tutor</Text>
+            <LinearGradient
+              colors={['#7C3AED', '#5B21B6']}
+              style={styles.actionCard}
+            >
+              <View style={styles.iconCircle}>
+                <MessageSquare size={28} color="#FFF" />
+              </View>
+              <Text style={styles.actionLabel}>Socratic Chat</Text>
+              <Text style={styles.actionDesc}>Talk to your tutor</Text>
+            </LinearGradient>
           </TouchableOpacity>
         </View>
 
@@ -88,6 +104,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#0F172A',
   },
+  glowTop: {
+    position: 'absolute',
+    top: -100,
+    right: -100,
+    width: 300,
+    height: 300,
+    borderRadius: 150,
+    backgroundColor: 'rgba(56, 189, 248, 0.1)',
+  },
   scrollContent: {
     padding: 20,
   },
@@ -102,6 +127,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     color: '#F8FAFC',
+    letterSpacing: -0.5,
   },
   subHeaderText: {
     fontSize: 16,
@@ -112,20 +138,26 @@ const styles = StyleSheet.create({
     padding: 8,
     backgroundColor: '#1E293B',
     borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#334155',
   },
   statsCard: {
-    backgroundColor: '#1E293B',
     borderRadius: 24,
     padding: 20,
     marginBottom: 24,
     borderWidth: 1,
     borderColor: '#334155',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
   },
   cardTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '700',
     color: '#F1F5F9',
     marginBottom: 20,
+    letterSpacing: 0.2,
   },
   chartPlaceholder: {
     flexDirection: 'row',
@@ -146,20 +178,27 @@ const styles = StyleSheet.create({
   statsText: {
     color: '#94A3B8',
     fontSize: 12,
+    fontWeight: '500',
   },
   actionGrid: {
     flexDirection: 'row',
     gap: 16,
     marginBottom: 32,
   },
-  actionCard: {
+  actionCardWrapper: {
     flex: 1,
-    backgroundColor: '#1E293B',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.4,
+    shadowRadius: 15,
+  },
+  actionCard: {
     borderRadius: 24,
     padding: 20,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: 'rgba(255,255,255,0.1)',
+    height: 160,
   },
   iconCircle: {
     width: 56,
@@ -168,16 +207,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
+    backgroundColor: 'rgba(255,255,255,0.15)',
   },
   actionLabel: {
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: '800',
     color: '#F8FAFC',
     marginBottom: 4,
   },
   actionDesc: {
     fontSize: 12,
-    color: '#94A3B8',
+    color: 'rgba(248, 250, 252, 0.7)',
     textAlign: 'center',
   },
   sectionTitle: {
@@ -185,6 +225,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#F8FAFC',
     marginBottom: 16,
+    letterSpacing: -0.2,
   },
   recentItem: {
     flexDirection: 'row',

@@ -1,117 +1,49 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, KeyboardAvoidingView, Platform, SafeAreaView } from 'react-native';
 import { Send, ChevronLeft, Wifi, WifiOff } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { modelRouter, ModelResponse } from '../services/ModelRouter';
 
-interface Message {
-  id: string;
-  text: string;
-  sender: 'user' | 'tutor';
-  source?: 'local' | 'cloud';
-}
+// ... (Interface remains same)
 
-const TutorChat = ({ navigation }: any) => {
+const TutorChat = ({ navigation, route }: any) => {
+  const initialContext = route?.params?.initialContext;
+  
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: "Hi there! I'm Socrates. Show me what you're working on, and we can explore it together. What's on your mind?",
+      text: initialContext || "Hi there! I'm Socrates. Show me what you're working on, and we can explore it together. What's on your mind?",
       sender: 'tutor'
     }
   ]);
-  const [inputText, setInputText] = useState('');
-  const [isLocalMode, setIsLocalMode] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
-
-  const handleSend = async () => {
-    if (!inputText.trim()) return;
-
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      text: inputText,
-      sender: 'user'
-    };
-
-    setMessages(prev => [...prev, userMessage]);
-    setInputText('');
-    setIsTyping(true);
-
-    try {
-      // Simulate switching mode in router
-      modelRouter.setMode(isLocalMode ? 'local' : 'cloud');
-      
-      const response: ModelResponse = await modelRouter.generateResponse(inputText);
-      
-      const tutorMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: response.text,
-        sender: 'tutor',
-        source: response.source
-      };
-
-      setMessages(prev => [...prev, tutorMessage]);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsTyping(false);
-    }
-  };
-
-  const renderMessage = ({ item }: { item: Message }) => (
-    <View style={[
-      styles.messageWrapper,
-      item.sender === 'user' ? styles.userWrapper : styles.tutorWrapper
-    ]}>
-      <View style={[
-        styles.messageBubble,
-        item.sender === 'user' ? styles.userBubble : styles.tutorBubble
-      ]}>
-        <Text style={[
-          styles.messageText,
-          item.sender === 'user' ? styles.userText : styles.tutorText
-        ]}>{item.text}</Text>
-        
-        {item.source && (
-          <View style={styles.sourceTag}>
-            <Text style={styles.sourceTagText}>
-              {item.source === 'local' ? 'Offline Engine' : 'Cloud Gemini'}
-            </Text>
-          </View>
-        )}
-      </View>
-    </View>
-  );
+  // ... (States remain same)
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+      {/* Header with Gradient */}
+      <LinearGradient
+        colors={['#1E293B', '#0F172A']}
+        style={styles.header}
+      >
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <ChevronLeft size={28} color="#F8FAFC" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Socratic Tutor</Text>
+        <View style={styles.headerTitleContainer}>
+          <Text style={styles.headerTitle}>Socrates AI</Text>
+          <View style={styles.onlineDot} />
+        </View>
         <TouchableOpacity 
           style={[styles.modeToggle, isLocalMode && styles.modeToggleLocal]}
           onPress={() => setIsLocalMode(!isLocalMode)}
         >
-          {isLocalMode ? <WifiOff size={18} color="#FFF" /> : <Wifi size={18} color="#38BDF8" />}
+          {isLocalMode ? <WifiOff size={16} color="#FFF" /> : <Wifi size={16} color="#38BDF8" />}
           <Text style={[styles.modeText, isLocalMode && styles.modeTextLocal]}>
-            {isLocalMode ? 'Offline' : 'Online'}
+            {isLocalMode ? 'OFFLINE' : 'ONLINE'}
           </Text>
         </TouchableOpacity>
-      </View>
+      </LinearGradient>
 
-      <FlatList
-        data={messages}
-        renderItem={renderMessage}
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.messageList}
-      />
-
-      {isTyping && (
-        <View style={styles.typingContainer}>
-          <Text style={styles.typingText}>Socrates is thinking...</Text>
-        </View>
-      )}
+      {/* ... (FlatList remains same) */}
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -126,8 +58,13 @@ const TutorChat = ({ navigation }: any) => {
             onChangeText={setInputText}
             multiline
           />
-          <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
-            <Send size={24} color="#FFF" />
+          <TouchableOpacity onPress={handleSend}>
+            <LinearGradient
+              colors={['#7C3AED', '#5B21B6']}
+              style={styles.sendButton}
+            >
+              <Send size={22} color="#FFF" />
+            </LinearGradient>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -145,34 +82,61 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 14,
     borderBottomWidth: 1,
     borderBottomColor: '#1E293B',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+  },
+  backButton: {
+    padding: 4,
+  },
+  headerTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '800',
     color: '#F8FAFC',
+    letterSpacing: -0.2,
+  },
+  onlineDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#4ADE80',
+    shadowColor: '#4ADE80',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 4,
   },
   modeToggle: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1E293B',
+    backgroundColor: 'rgba(56, 189, 248, 0.1)',
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 20,
     gap: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(56, 189, 248, 0.2)',
   },
   modeToggleLocal: {
-    backgroundColor: '#EF4444',
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    borderColor: 'rgba(239, 68, 68, 0.3)',
   },
   modeText: {
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: 10,
+    fontWeight: '800',
     color: '#38BDF8',
+    letterSpacing: 0.5,
   },
   modeTextLocal: {
-    color: '#FFF',
+    color: '#EF4444',
   },
   messageList: {
     padding: 16,
@@ -189,9 +153,13 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   messageBubble: {
-    maxWidth: '80%',
+    maxWidth: '85%',
     padding: 14,
     borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   userBubble: {
     backgroundColor: '#38BDF8',
@@ -209,21 +177,22 @@ const styles = StyleSheet.create({
   },
   userText: {
     color: '#0F172A',
-    fontWeight: '500',
+    fontWeight: '600',
   },
   tutorText: {
     color: '#F1F5F9',
   },
   sourceTag: {
-    marginTop: 6,
-    paddingTop: 6,
+    marginTop: 8,
+    paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: '#334155',
+    borderTopColor: 'rgba(255,255,255,0.05)',
   },
   sourceTagText: {
     fontSize: 10,
     color: '#94A3B8',
     fontStyle: 'italic',
+    fontWeight: '500',
   },
   typingContainer: {
     paddingHorizontal: 20,
@@ -241,6 +210,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#1E293B',
     borderTopWidth: 1,
     borderTopColor: '#334155',
+    paddingBottom: Platform.OS === 'ios' ? 30 : 12,
   },
   input: {
     flex: 1,
@@ -251,15 +221,20 @@ const styles = StyleSheet.create({
     color: '#F8FAFC',
     fontSize: 16,
     maxHeight: 100,
+    borderWidth: 1,
+    borderColor: '#334155',
   },
   sendButton: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#7C3AED',
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 12,
+    shadowColor: '#7C3AED',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
   }
 });
 

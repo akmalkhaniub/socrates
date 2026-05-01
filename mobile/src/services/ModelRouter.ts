@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { SOCRATES_SYSTEM_PROMPT } from './Prompts';
 
 export type ModelMode = 'local' | 'cloud';
 
@@ -31,7 +32,11 @@ class ModelRouter {
 
   private async generateCloudResponse(prompt: string, imageBase64?: string): Promise<ModelResponse> {
     try {
-      const model = this.geminiClient!.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      // Use systemInstruction for Gemini 1.5
+      const model = this.geminiClient!.getGenerativeModel({ 
+        model: 'gemini-1.5-flash',
+        systemInstruction: SOCRATES_SYSTEM_PROMPT
+      });
       
       let result;
       if (imageBase64) {
